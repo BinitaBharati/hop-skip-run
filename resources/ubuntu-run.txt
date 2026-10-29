@@ -1,0 +1,281 @@
+ nvcc -O3     -std=c++17     -arch=sm_89     -I/usr/include/x86_64-linux-gnu     /home/binita/workspace/processor-envs/src/CUDA/sobel/sobel_cuda_enhanced.cu -o gpu_video_processor1     -lavformat -lavcodec -lavutil     -lcudart
+binita@wildflower:~/workspace/processor-envs$ ./gpu_video_processor1 resources/input/mp4/4k/1.mp4 gpu.mp4
+
+Available CUDA devices:
+  [0] NVIDIA GeForce RTX 4060 Ti
+  [1] Quadro P400
+
+Selected CUDA device: 0
+Using GPU 0: NVIDIA GeForce RTX 4060 Ti
+
+================ INPUT =================
+Input file       : resources/input/mp4/4k/1.mp4
+Codec            : h264
+Resolution       : 3840x2160
+Input time base  : 1/12800 (0.000078)
+Frame rate       : 25/1 (25.000000)
+PTS step         : 512 ticks/frame
+Input start PTS : 0 -> 0.000000 sec
+Input duration   : 7.520000 sec
+Input nb_frames  : 188
+==========================================
+
+CUVID decoder configuration:
+  pkt_timebase   : 1/12800 (0.000078)
+  decoder fps    : 25/1 (25.000000)
+
+Starting GPU processing...
+
+[PACKET] #1 pts=0 dts=-1024 duration=512
+[PACKET] #2 pts=512 dts=-512 duration=512
+[PACKET] #3 pts=1024 dts=0 duration=512
+[PACKET] #4 pts=1536 dts=512 duration=512
+[PACKET] #5 pts=2048 dts=1024 duration=512
+[DECODE] frame=1 pts=0 duration=0 format=cuda
+[DECODE] frame=2 pts=512 duration=0 format=cuda
+[DECODE] frame=3 pts=1024 duration=0 format=cuda
+[DECODE] frame=4 pts=1536 duration=0 format=cuda
+[DECODE] frame=5 pts=2048 duration=0 format=cuda
+Processed frames: 30[PACKET] #50 pts=25088 dts=24064 duration=512
+[DECODE] frame=50 pts=25088 duration=0 format=cuda
+Processed frames: 90[PACKET] #100 pts=50688 dts=49664 duration=512
+[DECODE] frame=100 pts=50688 duration=0 format=cuda
+Processed frames: 120[PACKET] #150 pts=76288 dts=75264 duration=512
+[DECODE] frame=150 pts=76288 duration=0 format=cuda
+Processed frames: 180
+
+Input demux reached EOF.
+
+Sending NULL packet to CUVID...
+CUVID drain complete.
+Sending NULL frame to NVENC...
+NVENC drain complete.
+
+
+============================================================
+PIPELINE DIAGNOSTICS
+============================================================
+Input packets read             : 188
+Video packets read             : 188
+Video packets sent to CUVID    : 188
+CUVID frames received          : 183
+CUVID frames received on drain : 5
+CUDA Sobel frames processed    : 188
+Frames submitted to NVENC      : 188
+Encoded packets received       : 188
+Encoded packets written        : 188
+============================================================
+
+FRAME ACCOUNTING
+  CUVID total frames : 188
+  CUDA total frames  : 188
+  NVENC submissions  : 188
+  Video packets      : 188
+  Container nb_frames: 188
+
+PTS DIAGNOSTICS
+  First decoder PTS : 0 (0.000000 sec)
+  Last decoder PTS  : 93184 (7.280000 sec)
+  First output PTS  : 0 (0.000000 sec)
+  Last output PTS   : 93184 (7.280000 sec)
+  Output PTS span   : 7.280000 sec
+  Expected duration : 7.520000 sec
+  Last frame + 1    : 7.320000 sec
+
+PERFORMANCE
+  CUDA Sobel time       : 18.236 ms
+  Average Sobel        : 0.097 ms/frame
+  Total processing time : 1.320 sec (1319.844 ms)
+
+============================================================
+GPU VIDEO PROCESSING COMPLETE
+============================================================
+
+Successfully created:
+  gpu.mp4
+
+binita@wildflower:~/workspace/processor-envs$ gcc -O2 -o sobel_cpu src/C/sobel/video_sobel_parallel.c   $(pkg-config --cflags --libs libavformat libavcodec libavutil)   -lpthread -lm
+binita@wildflower:~/workspace/processor-envs$ ./sobel_cpu resources/input/mp4/4k/1.mp4 cpu.mp4
+Opening input: resources/input/mp4/4k/1.mp4
+Resolution: 3840 x 2160
+Source FPS: 25.00
+Codec: h264
+Input time base: 1/12800
+Using encoder: libx264
+Output FPS: 25/1
+Output time base: 1/12800
+[libx264 @ 0x623482179080] using cpu capabilities: MMX2 SSE2Fast SSSE3 SSE4.2 AVX FMA3 BMI2 AVX2
+[libx264 @ 0x623482179080] profile High, level 5.1, 4:2:0, 8-bit
+[libx264 @ 0x623482179080] 264 - core 164 r3108 31e19f9 - H.264/MPEG-4 AVC codec - Copyleft 2003-2023 - http://www.videolan.org/x264.html - options: cabac=1 ref=3 deblock=1:0:0 analyse=0x3:0x113 me=hex subme=7 psy=1 psy_rd=1.00:0.00 mixed_ref=1 me_range=16 chroma_me=1 trellis=1 8x8dct=1 cqm=0 deadzone=21,11 fast_pskip=1 chroma_qp_offset=-2 threads=24 lookahead_threads=4 sliced_threads=0 nr=0 decimate=1 interlaced=0 bluray_compat=0 constrained_intra=0 bframes=0 weightp=2 keyint=50 keyint_min=5 scenecut=40 intra_refresh=0 rc_lookahead=40 rc=crf mbtree=1 crf=23.0 qcomp=0.60 qpmin=0 qpmax=69 qpstep=4 ip_ratio=1.40 aq=1:1.00
+Final output time base: 1/12800
+
+Processing...
+Output: cpu.mp4
+
+Frames processed: 175
+
+========================================
+Processing complete
+========================================
+Frames processed: 188
+Resolution: 3840 x 2160
+Frame rate: 25/1
+Time base: 1/12800
+Total processing time: 7.72 seconds
+Average Sobel time: 7.847 ms/frame
+Sobel processing FPS: 127.44
+
+Output video:
+cpu.mp4
+========================================
+[libx264 @ 0x623482179080] frame I:7     Avg QP:19.96  size:307901
+[libx264 @ 0x623482179080] frame P:181   Avg QP:22.07  size:103315
+[libx264 @ 0x623482179080] mb I  I16..4: 11.3% 72.6% 16.2%
+[libx264 @ 0x623482179080] mb P  I16..4:  2.2% 15.9%  2.4%  P16..4: 15.1%  3.7%  2.2%  0.0%  0.0%    skip:58.5%
+[libx264 @ 0x623482179080] 8x8 transform intra:76.8% inter:79.3%
+[libx264 @ 0x623482179080] coded y,uvDC,uvAC intra: 42.4% 0.0% 0.0% inter: 9.6% 0.0% 0.0%
+[libx264 @ 0x623482179080] i16 v,h,dc,p: 47% 47%  3%  3%
+[libx264 @ 0x623482179080] i8 v,h,dc,ddl,ddr,vr,hd,vl,hu: 31% 21% 27%  4%  2%  2%  2%  3%  9%
+[libx264 @ 0x623482179080] i4 v,h,dc,ddl,ddr,vr,hd,vl,hu: 27% 30% 10%  6%  3%  3%  3%  5% 14%
+[libx264 @ 0x623482179080] i8c dc,h,v,p: 100%  0%  0%  0%
+[libx264 @ 0x623482179080] Weighted P-Frames: Y:0.0% UV:0.0%
+[libx264 @ 0x623482179080] ref P L0: 49.2% 15.3% 21.7% 13.8%
+[libx264 @ 0x623482179080] kb/s:22186.44
+binita@wildflower:~/workspace/processor-envs$ nproc
+16
+binita@wildflower:~/workspace/processor-envs$ pwd
+/home/binita/workspace/processor-envs
+binita@wildflower:~/workspace/processor-envs$ tar cvf src.tar src/
+src/
+src/CUDA/
+src/CUDA/sobel/
+src/CUDA/sobel/sobel_cuda_enhanced_buggy2.cu
+src/CUDA/sobel/sobel_cuda_enhanced _bugg1.cu
+src/CUDA/sobel/sobel_cuda_enhanced_buggy3.cu
+src/CUDA/sobel/sobel_cuda_enhanced.cu
+src/CUDA/sobel/sobel_cuda.cu
+src/C/
+src/C/sobel/
+src/C/sobel/common.h
+src/C/sobel/video_sobel_parallel.c
+src/C/sobel/video_sobel_sequential.c
+binita@wildflower:~/workspace/processor-envs$ mv src.tar /run/user/1000/gvfs/sftp:host=192.168.1.13/Users/binita/personal/projects/processor-envs/
+binita@wildflower:~/workspace/processor-envs$ ffprobe -v error -show_entries stream=index,codec_name,width,height,time_base,start_time,duration,r_frame_rate,avg_frame_rate,nb_frames -show_entries format=start_time,duration -of default=noprint_wrappers=1 resources/input/mp4/4k/1.mp4 
+index=0
+codec_name=h264
+width=3840
+height=2160
+r_frame_rate=25/1
+avg_frame_rate=25/1
+time_base=1/12800
+start_time=0.000000
+duration=7.520000
+nb_frames=188
+start_time=0.000000
+duration=7.520000
+binita@wildflower:~/workspace/processor-envs$ ffprobe -v error -show_entries stream=index,codec_name,width,height,time_base,start_time,duration,r_frame_rate,avg_frame_rate,nb_frames -show_entries format=start_time,duration -of default=noprint_wrappers=1 gpu.mp4 
+index=0
+codec_name=h264
+width=3840
+height=2160
+r_frame_rate=25/1
+avg_frame_rate=25/1
+time_base=1/12800
+start_time=0.000000
+duration=7.520000
+nb_frames=188
+start_time=0.000000
+duration=7.520000
+binita@wildflower:~/workspace/processor-envs$ ffprobe -v error -show_entries stream=index,codec_name,width,height,time_base,start_time,duration,r_frame_rate,avg_frame_rate,nb_frames -show_entries format=start_time,duration -of default=noprint_wrappers=1 cpu.mp4 
+index=0
+codec_name=h264
+width=3840
+height=2160
+r_frame_rate=25/1
+avg_frame_rate=25/1
+time_base=1/12800
+start_time=0.000000
+duration=7.520000
+nb_frames=188
+start_time=0.000000
+duration=7.520000
+
+==========================================================================================================================
+==========================================================================================================================
+
+gcc -O2 -o sobel_cpu src/C/sobel/video_sobel_parallel_multiple_videos.c   $(pkg-config --cflags --libs libavformat libavcodec libavutil)   -lpthread -lm
+
+./sobel_cpu resources/input/mp4/4k resources/output/cpu/AMD-8-core/ 2 6 0 > out
+
+
+=============================================
+              FINAL RESULTS
+=============================================
+Total wall time    : 1578.088 sec (1578087.968 ms)
+Videos processed   : 10
+Video threads      : 2
+Sobel threads      : 6
+Failed videos      : 0
+=============================================
+
+=============================================
+All videos processed successfully.
+=============================================
+
+
+
+==============================================================================================================================
+nvcc -O3     -std=c++17     -arch=sm_89     -I/usr/include/x86_64-linux-gnu     /home/binita/workspace/processor-envs/src/CUDA/sobel/sobel_cuda_enhanced_multiple_videos.cu -o gpu_video_processor     -lavformat -lavcodec -lavutil     -lcudart
+
+./gpu_video_processor resources/input/mp4/4k resources/output/gpu/nvdia-rtx-4060/ 2 > out1
+
+Videos found       : 10
+Video threads      : 2
+Videos failed      : 0
+Total processing time    : 267.602 sec (267602.432 ms)
+
+================================================================================================================================
+
+gcc -O3 -std=c11 -pthread src/C/bfs/bfs_cpu.c -o bfs_cpu
+binita@wildflower:~/workspace/processor-envs$ ./bfs_cpu
+Usage: ./bfs_cpu <depth> <branching_factor>
+binita@wildflower:~/workspace/processor-envs$ ./bfs_cpu 100000000 2
+
+Running BFS...
+BFS completed
+Levels traversed : 100000001
+Nodes visited    : 200000001
+BFS time         : 1.266 seconds
+
+======================================================================================================================================
+
+ ./bfs_cpu_threaded c
+========================================
+CPU Parallel BFS
+========================================
+Depth           : 100000000
+Branching factor: 2
+CPU threads     : 8
+----------------------------------------
+Creating graph...
+Nodes           : 200000001
+Edges           : 399999998
+----------------------------------------
+
+CPU BFS completed
+-----------------
+CPU threads     : 8
+Levels traversed: 100000001
+Nodes visited   : 200000001
+----------------------------------------
+BFS time        : 1562.898861 seconds
+=========================================================================================================================================
+nvcc -O3 -arch=sm_89 src/CUDA/bfs/gpu_bfs_enhanced.cu -o bfs_gpu
+binita@wildflower:~/workspace/processor-envs$ ./bfs_gpu
+Usage:
+  ./bfs_gpu depth branching_factor blocks threads_per_block
+
+Example:
+  ./bfs_gpu 1000000 2 1 2
+binita@wildflower:~/workspace/processor-envs$ ./bfs_gpu 100000000 2 1 2
+
